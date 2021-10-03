@@ -1,0 +1,11 @@
+[package]
+name = "the-definitive-antlr4-reference-rs"
+version = "0.1.0"
+authors = ["Olivier ROLAND <newca12@users.noreply.github.com>"]
+edition = "2018"
+license = "GPL-3.0-or-later"
+
+[workspace]
+members = [
+    "starter"
+]
