@@ -8,5 +8,9 @@ The purpose of [edla.org](http://www.edla.org) is to promote the state of the ar
 ### Usage ###
 The code use a preview of [antlr4rust 0.3](https://github.com/rrevenantt/antlr4rust/pull/29).
 
+### Issues with antlr4rust (all very minor so far) ###
+* starter: ArrayInitListener in translate.rs show no value in enter_value, exit_value has been used instead.
+* tour: generation with -no-listener -visitor leave LabeledExprListener usage in labeledexprparser.rs and lead to compilation error. Use only -visitor fix it.
+
 ### License ###
 © 2021 Olivier ROLAND. Distributed under the GPLv3 License.
