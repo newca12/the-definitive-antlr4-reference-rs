@@ -8,5 +8,6 @@ license = "GPL-3.0-or-later"
 [workspace]
 members = [
     "starter",
-    "tour"
+    "tour",
+    "listeners"
 ]
