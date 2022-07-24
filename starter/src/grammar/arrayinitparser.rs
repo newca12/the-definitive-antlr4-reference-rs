@@ -5,6 +5,7 @@
 #![allow(nonstandard_style)]
 #![allow(unused_imports)]
 #![allow(unused_mut)]
+#![allow(unused_braces)]
 use antlr_rust::PredictionContextCache;
 use antlr_rust::parser::{Parser, BaseParser, ParserRecog, ParserNodeType};
 use antlr_rust::token_stream::TokenStream;
@@ -61,7 +62,7 @@ use std::any::{Any,TypeId};
 
 
 type BaseParserType<'input, I> =
-	BaseParser<'input,ArrayInitParserExt, I, ArrayInitParserContextType , dyn ArrayInitListener<'input> + 'input >;
+	BaseParser<'input,ArrayInitParserExt<'input>, I, ArrayInitParserContextType , dyn ArrayInitListener<'input> + 'input >;
 
 type TokenType<'input> = <LocalTokenFactory<'input> as TokenFactory<'input>>::Tok;
 pub type LocalTokenFactory<'input> = CommonTokenFactory;
@@ -104,6 +105,7 @@ where
 				input,
 				Arc::clone(&interpreter),
 				ArrayInitParserExt{
+					_pd: Default::default(),
 				}
 			),
 			interpreter,
@@ -179,20 +181,21 @@ where
     }
 }
 
-pub struct ArrayInitParserExt{
+pub struct ArrayInitParserExt<'input>{
+	_pd: PhantomData<&'input str>,
 }
 
-impl ArrayInitParserExt{
+impl<'input> ArrayInitParserExt<'input>{
 }
+antlr_rust::tid! { ArrayInitParserExt<'a> }
 
-
-impl<'input> TokenAware<'input> for ArrayInitParserExt{
+impl<'input> TokenAware<'input> for ArrayInitParserExt<'input>{
 	type TF = LocalTokenFactory<'input>;
 }
 
-impl<'input,I: TokenStream<'input, TF = LocalTokenFactory<'input> > + TidAble<'input>> ParserRecog<'input, BaseParserType<'input,I>> for ArrayInitParserExt{}
+impl<'input,I: TokenStream<'input, TF = LocalTokenFactory<'input> > + TidAble<'input>> ParserRecog<'input, BaseParserType<'input,I>> for ArrayInitParserExt<'input>{}
 
-impl<'input,I: TokenStream<'input, TF = LocalTokenFactory<'input> > + TidAble<'input>> Actions<'input, BaseParserType<'input,I>> for ArrayInitParserExt{
+impl<'input,I: TokenStream<'input, TF = LocalTokenFactory<'input> > + TidAble<'input>> Actions<'input, BaseParserType<'input,I>> for ArrayInitParserExt<'input>{
 	fn get_grammar_file_name(&self) -> & str{ "ArrayInit.g4"}
 
    	fn get_rule_names(&self) -> &[& str] {&ruleNames}

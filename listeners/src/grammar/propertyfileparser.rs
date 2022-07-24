@@ -5,6 +5,7 @@
 #![allow(nonstandard_style)]
 #![allow(unused_imports)]
 #![allow(unused_mut)]
+#![allow(unused_braces)]
 use antlr_rust::PredictionContextCache;
 use antlr_rust::parser::{Parser, BaseParser, ParserRecog, ParserNodeType};
 use antlr_rust::token_stream::TokenStream;
@@ -62,7 +63,7 @@ use std::any::{Any,TypeId};
 
 
 type BaseParserType<'input, I> =
-	BaseParser<'input,PropertyFileParserExt, I, PropertyFileParserContextType , dyn PropertyFileListener<'input> + 'input >;
+	BaseParser<'input,PropertyFileParserExt<'input>, I, PropertyFileParserContextType , dyn PropertyFileListener<'input> + 'input >;
 
 type TokenType<'input> = <LocalTokenFactory<'input> as TokenFactory<'input>>::Tok;
 pub type LocalTokenFactory<'input> = CommonTokenFactory;
@@ -105,6 +106,7 @@ where
 				input,
 				Arc::clone(&interpreter),
 				PropertyFileParserExt{
+					_pd: Default::default(),
 				}
 			),
 			interpreter,
@@ -190,20 +192,21 @@ where
     }
 }
 
-pub struct PropertyFileParserExt{
+pub struct PropertyFileParserExt<'input>{
+	_pd: PhantomData<&'input str>,
 }
 
-impl PropertyFileParserExt{
+impl<'input> PropertyFileParserExt<'input>{
 }
+antlr_rust::tid! { PropertyFileParserExt<'a> }
 
-
-impl<'input> TokenAware<'input> for PropertyFileParserExt{
+impl<'input> TokenAware<'input> for PropertyFileParserExt<'input>{
 	type TF = LocalTokenFactory<'input>;
 }
 
-impl<'input,I: TokenStream<'input, TF = LocalTokenFactory<'input> > + TidAble<'input>> ParserRecog<'input, BaseParserType<'input,I>> for PropertyFileParserExt{}
+impl<'input,I: TokenStream<'input, TF = LocalTokenFactory<'input> > + TidAble<'input>> ParserRecog<'input, BaseParserType<'input,I>> for PropertyFileParserExt<'input>{}
 
-impl<'input,I: TokenStream<'input, TF = LocalTokenFactory<'input> > + TidAble<'input>> Actions<'input, BaseParserType<'input,I>> for PropertyFileParserExt{
+impl<'input,I: TokenStream<'input, TF = LocalTokenFactory<'input> > + TidAble<'input>> Actions<'input, BaseParserType<'input,I>> for PropertyFileParserExt<'input>{
 	fn get_grammar_file_name(&self) -> & str{ "PropertyFile.g4"}
 
    	fn get_rule_names(&self) -> &[& str] {&ruleNames}

@@ -5,6 +5,7 @@
 #![allow(nonstandard_style)]
 #![allow(unused_imports)]
 #![allow(unused_mut)]
+#![allow(unused_braces)]
 use antlr_rust::PredictionContextCache;
 use antlr_rust::parser::{Parser, BaseParser, ParserRecog, ParserNodeType};
 use antlr_rust::token_stream::TokenStream;
@@ -70,7 +71,7 @@ use std::any::{Any,TypeId};
 
 
 type BaseParserType<'input, I> =
-	BaseParser<'input,ExprParserExt, I, ExprParserContextType , dyn ExprListener<'input> + 'input >;
+	BaseParser<'input,ExprParserExt<'input>, I, ExprParserContextType , dyn ExprListener<'input> + 'input >;
 
 type TokenType<'input> = <LocalTokenFactory<'input> as TokenFactory<'input>>::Tok;
 pub type LocalTokenFactory<'input> = CommonTokenFactory;
@@ -113,6 +114,7 @@ where
 				input,
 				Arc::clone(&interpreter),
 				ExprParserExt{
+					_pd: Default::default(),
 				}
 			),
 			interpreter,
@@ -188,20 +190,21 @@ where
     }
 }
 
-pub struct ExprParserExt{
+pub struct ExprParserExt<'input>{
+	_pd: PhantomData<&'input str>,
 }
 
-impl ExprParserExt{
+impl<'input> ExprParserExt<'input>{
 }
+antlr_rust::tid! { ExprParserExt<'a> }
 
-
-impl<'input> TokenAware<'input> for ExprParserExt{
+impl<'input> TokenAware<'input> for ExprParserExt<'input>{
 	type TF = LocalTokenFactory<'input>;
 }
 
-impl<'input,I: TokenStream<'input, TF = LocalTokenFactory<'input> > + TidAble<'input>> ParserRecog<'input, BaseParserType<'input,I>> for ExprParserExt{}
+impl<'input,I: TokenStream<'input, TF = LocalTokenFactory<'input> > + TidAble<'input>> ParserRecog<'input, BaseParserType<'input,I>> for ExprParserExt<'input>{}
 
-impl<'input,I: TokenStream<'input, TF = LocalTokenFactory<'input> > + TidAble<'input>> Actions<'input, BaseParserType<'input,I>> for ExprParserExt{
+impl<'input,I: TokenStream<'input, TF = LocalTokenFactory<'input> > + TidAble<'input>> Actions<'input, BaseParserType<'input,I>> for ExprParserExt<'input>{
 	fn get_grammar_file_name(&self) -> & str{ "Expr.g4"}
 
    	fn get_rule_names(&self) -> &[& str] {&ruleNames}
