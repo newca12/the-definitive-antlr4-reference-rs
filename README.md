@@ -6,7 +6,7 @@ the-definitive-antlr4-reference-rs is an EDLA project.
 The purpose of [edla.org](http://www.edla.org) is to promote the state of the art in various domains.
 
 ### Usage ###
-The code use [antlr-rust 0.3.0-beta](https://crates.io/crates/antlr_rust/0.3.0-beta).
+The code use this not yet merged [Pull Request](https://github.com/antlr4rust/antlr4/pull/4).
 
 ### Issues with antlr4rust (all very minor so far) ###
 - starter
@@ -17,4 +17,4 @@ The code use [antlr-rust 0.3.0-beta](https://crates.io/crates/antlr_rust/0.3.0-b
     - Embededed code inside grammar is not portable. This is not an antlr4rust issue, the corresponding examples had been skipped.
 
 ### License ###
-© 2021-2022 Olivier ROLAND. Distributed under the GPLv3 License.
+© 2021-2025 Olivier ROLAND. Distributed under the GPLv3 License.

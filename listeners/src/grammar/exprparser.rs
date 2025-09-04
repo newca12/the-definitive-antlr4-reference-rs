@@ -1,4 +1,4 @@
-// Generated from Expr.g4 by ANTLR 4.8
+// Generated from Expr.g4 by ANTLR 4.13.2
 #![allow(dead_code)]
 #![allow(non_snake_case)]
 #![allow(non_upper_case_globals)]
@@ -6,29 +6,29 @@
 #![allow(unused_imports)]
 #![allow(unused_mut)]
 #![allow(unused_braces)]
-use antlr_rust::PredictionContextCache;
-use antlr_rust::parser::{Parser, BaseParser, ParserRecog, ParserNodeType};
-use antlr_rust::token_stream::TokenStream;
-use antlr_rust::TokenSource;
-use antlr_rust::parser_atn_simulator::ParserATNSimulator;
-use antlr_rust::errors::*;
-use antlr_rust::rule_context::{BaseRuleContext, CustomRuleContext, RuleContext};
-use antlr_rust::recognizer::{Recognizer,Actions};
-use antlr_rust::atn_deserializer::ATNDeserializer;
-use antlr_rust::dfa::DFA;
-use antlr_rust::atn::{ATN, INVALID_ALT};
-use antlr_rust::error_strategy::{ErrorStrategy, DefaultErrorStrategy};
-use antlr_rust::parser_rule_context::{BaseParserRuleContext, ParserRuleContext,cast,cast_mut};
-use antlr_rust::tree::*;
-use antlr_rust::token::{TOKEN_EOF,OwningToken,Token};
-use antlr_rust::int_stream::EOF;
-use antlr_rust::vocabulary::{Vocabulary,VocabularyImpl};
-use antlr_rust::token_factory::{CommonTokenFactory,TokenFactory, TokenAware};
+use antlr4rust::PredictionContextCache;
+use antlr4rust::parser::{Parser, BaseParser, ParserRecog, ParserNodeType};
+use antlr4rust::token_stream::TokenStream;
+use antlr4rust::TokenSource;
+use antlr4rust::parser_atn_simulator::ParserATNSimulator;
+use antlr4rust::errors::*;
+use antlr4rust::rule_context::{BaseRuleContext, CustomRuleContext, RuleContext};
+use antlr4rust::recognizer::{Recognizer,Actions};
+use antlr4rust::atn_deserializer::ATNDeserializer;
+use antlr4rust::dfa::DFA;
+use antlr4rust::atn::{ATN, INVALID_ALT};
+use antlr4rust::error_strategy::{ErrorStrategy, DefaultErrorStrategy};
+use antlr4rust::parser_rule_context::{BaseParserRuleContext, ParserRuleContext,cast,cast_mut};
+use antlr4rust::tree::*;
+use antlr4rust::token::{TOKEN_EOF,OwningToken,Token};
+use antlr4rust::int_stream::EOF;
+use antlr4rust::vocabulary::{Vocabulary,VocabularyImpl};
+use antlr4rust::token_factory::{CommonTokenFactory,TokenFactory, TokenAware};
 use super::exprlistener::*;
 use super::exprvisitor::*;
 
-use antlr_rust::lazy_static;
-use antlr_rust::{TidAble,TidExt};
+use antlr4rust::lazy_static;
+use antlr4rust::{TidAble,TidExt};
 
 use std::marker::PhantomData;
 use std::sync::Arc;
@@ -39,10 +39,11 @@ use std::ops::{DerefMut, Deref};
 use std::borrow::{Borrow,BorrowMut};
 use std::any::{Any,TypeId};
 
-		pub const MULT:isize=1; 
-		pub const ADD:isize=2; 
-		pub const INT:isize=3; 
-		pub const WS:isize=4;
+		pub const Expr_MULT:i32=1; 
+		pub const Expr_ADD:i32=2; 
+		pub const Expr_INT:i32=3; 
+		pub const Expr_WS:i32=4;
+	pub const Expr_EOF:i32=EOF;
 	pub const RULE_s:usize = 0; 
 	pub const RULE_e:usize = 1;
 	pub const ruleNames: [&'static str; 2] =  [
@@ -88,14 +89,13 @@ where
     I: TokenStream<'input, TF = LocalTokenFactory<'input> > + TidAble<'input>,
     H: ErrorStrategy<'input,BaseParserType<'input,I>>
 {
-	pub fn get_serialized_atn() -> &'static str { _serializedATN }
 
     pub fn set_error_strategy(&mut self, strategy: H) {
         self.err_handler = strategy
     }
 
     pub fn with_strategy(input: I, strategy: H) -> Self {
-		antlr_rust::recognizer::check_version("0","3");
+		antlr4rust::recognizer::check_version("0","3");
 		let interpreter = Arc::new(ParserATNSimulator::new(
 			_ATN.clone(),
 			_decision_to_DFA.clone(),
@@ -144,7 +144,7 @@ pub trait ExprParserContext<'input>:
 	ParserRuleContext<'input, TF=LocalTokenFactory<'input>, Ctx=ExprParserContextType>
 {}
 
-antlr_rust::coerce_from!{ 'input : ExprParserContext<'input> }
+antlr4rust::coerce_from!{ 'input : ExprParserContext<'input> }
 
 impl<'input, 'x, T> VisitableDyn<T> for dyn ExprParserContext<'input> + 'input
 where
@@ -158,12 +158,12 @@ where
 impl<'input> ExprParserContext<'input> for TerminalNode<'input,ExprParserContextType> {}
 impl<'input> ExprParserContext<'input> for ErrorNode<'input,ExprParserContextType> {}
 
-antlr_rust::tid! { impl<'input> TidAble<'input> for dyn ExprParserContext<'input> + 'input }
+antlr4rust::tid! { impl<'input> TidAble<'input> for dyn ExprParserContext<'input> + 'input }
 
-antlr_rust::tid! { impl<'input> TidAble<'input> for dyn ExprListener<'input> + 'input }
+antlr4rust::tid! { impl<'input> TidAble<'input> for dyn ExprListener<'input> + 'input }
 
 pub struct ExprParserContextType;
-antlr_rust::tid!{ExprParserContextType}
+antlr4rust::tid!{ExprParserContextType}
 
 impl<'input> ParserNodeType<'input> for ExprParserContextType{
 	type TF = LocalTokenFactory<'input>;
@@ -198,7 +198,7 @@ pub struct ExprParserExt<'input>{
 
 impl<'input> ExprParserExt<'input>{
 }
-antlr_rust::tid! { ExprParserExt<'a> }
+antlr4rust::tid! { ExprParserExt<'a> }
 
 impl<'input> TokenAware<'input> for ExprParserExt<'input>{
 	type TF = LocalTokenFactory<'input>;
@@ -212,7 +212,7 @@ impl<'input,I: TokenStream<'input, TF = LocalTokenFactory<'input> > + TidAble<'i
    	fn get_rule_names(&self) -> &[& str] {&ruleNames}
 
    	fn get_vocabulary(&self) -> &dyn Vocabulary { &**VOCABULARY }
-	fn sempred(_localctx: Option<&(dyn ExprParserContext<'input> + 'input)>, rule_index: isize, pred_index: isize,
+	fn sempred(_localctx: Option<&(dyn ExprParserContext<'input> + 'input)>, rule_index: i32, pred_index: i32,
 			   recog:&mut BaseParserType<'input,I>
 	)->bool{
 		match rule_index {
@@ -226,7 +226,7 @@ impl<'input, I> ExprParser<'input, I, DefaultErrorStrategy<'input,ExprParserCont
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input> > + TidAble<'input>,
 {
-	fn e_sempred(_localctx: Option<&EContext<'input>>, pred_index:isize,
+	fn e_sempred(_localctx: Option<&EContext<'input>>, pred_index:i32,
 						recog:&mut <Self as Deref>::Target
 		) -> bool {
 		match pred_index {
@@ -276,12 +276,13 @@ impl<'input> CustomRuleContext<'input> for SContextExt<'input>{
 	fn get_rule_index(&self) -> usize { RULE_s }
 	//fn type_rule_index() -> usize where Self: Sized { RULE_s }
 }
-antlr_rust::tid!{SContextExt<'a>}
+antlr4rust::tid!{SContextExt<'a>}
 
 impl<'input> SContextExt<'input>{
-	fn new(parent: Option<Rc<dyn ExprParserContext<'input> + 'input > >, invoking_state: isize) -> Rc<SContextAll<'input>> {
+	fn new(parent: Option<Rc<dyn ExprParserContext<'input> + 'input > >, invoking_state: i32) -> Rc<SContextAll<'input>> {
 		Rc::new(
 			BaseParserRuleContext::new_parser_ctx(parent, invoking_state,SContextExt{
+
 				ph:PhantomData
 			}),
 		)
@@ -373,13 +374,14 @@ impl<'input> CustomRuleContext<'input> for EContextExt<'input>{
 	fn get_rule_index(&self) -> usize { RULE_e }
 	//fn type_rule_index() -> usize where Self: Sized { RULE_e }
 }
-antlr_rust::tid!{EContextExt<'a>}
+antlr4rust::tid!{EContextExt<'a>}
 
 impl<'input> EContextExt<'input>{
-	fn new(parent: Option<Rc<dyn ExprParserContext<'input> + 'input > >, invoking_state: isize) -> Rc<EContextAll<'input>> {
+	fn new(parent: Option<Rc<dyn ExprParserContext<'input> + 'input > >, invoking_state: i32) -> Rc<EContextAll<'input>> {
 		Rc::new(
 			BaseParserRuleContext::new_parser_ctx(parent, invoking_state,EContextExt{
 				op: None, 
+
 				ph:PhantomData
 			}),
 		)
@@ -391,7 +393,7 @@ pub trait EContextAttrs<'input>: ExprParserContext<'input> + BorrowMut<EContextE
 /// Retrieves first TerminalNode corresponding to token INT
 /// Returns `None` if there is no child corresponding to token INT
 fn INT(&self) -> Option<Rc<TerminalNode<'input,ExprParserContextType>>> where Self:Sized{
-	self.get_token(INT, 0)
+	self.get_token(Expr_INT, 0)
 }
 fn e_all(&self) ->  Vec<Rc<EContextAll<'input>>> where Self:Sized{
 	self.children_of_type()
@@ -402,12 +404,12 @@ fn e(&self, i: usize) -> Option<Rc<EContextAll<'input>>> where Self:Sized{
 /// Retrieves first TerminalNode corresponding to token MULT
 /// Returns `None` if there is no child corresponding to token MULT
 fn MULT(&self) -> Option<Rc<TerminalNode<'input,ExprParserContextType>>> where Self:Sized{
-	self.get_token(MULT, 0)
+	self.get_token(Expr_MULT, 0)
 }
 /// Retrieves first TerminalNode corresponding to token ADD
 /// Returns `None` if there is no child corresponding to token ADD
 fn ADD(&self) -> Option<Rc<TerminalNode<'input,ExprParserContextType>>> where Self:Sized{
-	self.get_token(ADD, 0)
+	self.get_token(Expr_ADD, 0)
 }
 
 }
@@ -424,7 +426,7 @@ where
 		self.e_rec(0)
 	}
 
-	fn e_rec(&mut self, _p: isize)
+	fn e_rec(&mut self, _p: i32)
 	-> Result<Rc<EContextAll<'input>>,ANTLRError> {
 		let recog = self;
 		let _parentctx = recog.ctx.take();
@@ -435,16 +437,15 @@ where
         let mut _prevctx = _localctx.clone();
 		let _startState = 2;
 		let result: Result<(), ANTLRError> = (|| {
-			let mut _alt: isize;
+			let mut _alt: i32;
 			//recog.base.enter_outer_alt(_localctx.clone(), 1);
 			recog.base.enter_outer_alt(None, 1);
 			{
 			{
 			recog.base.set_state(7);
-			recog.base.match_token(INT,&mut recog.err_handler)?;
+			recog.base.match_token(Expr_INT,&mut recog.err_handler)?;
 
 			}
-
 			let tmp = recog.input.lt(-1).cloned();
 			recog.ctx.as_ref().unwrap().set_stop(tmp);
 			recog.base.set_state(17);
@@ -465,11 +466,12 @@ where
 							recog.push_new_recursion_context(tmp.clone(), _startState, RULE_e);
 							_localctx = tmp;
 							recog.base.set_state(9);
-							if !({recog.precpred(None, 3)}) {
+							if !({let _localctx = Some(_localctx.clone());
+							recog.precpred(None, 3)}) {
 								Err(FailedPredicateError::new(&mut recog.base, Some("recog.precpred(None, 3)".to_owned()), None))?;
 							}
 							recog.base.set_state(10);
-							let tmp = recog.base.match_token(MULT,&mut recog.err_handler)?;
+							let tmp = recog.base.match_token(Expr_MULT,&mut recog.err_handler)?;
 							 cast_mut::<_,EContext >(&mut _localctx).op = Some(tmp.clone());
 							  
 
@@ -487,11 +489,12 @@ where
 							recog.push_new_recursion_context(tmp.clone(), _startState, RULE_e);
 							_localctx = tmp;
 							recog.base.set_state(12);
-							if !({recog.precpred(None, 2)}) {
+							if !({let _localctx = Some(_localctx.clone());
+							recog.precpred(None, 2)}) {
 								Err(FailedPredicateError::new(&mut recog.base, Some("recog.precpred(None, 2)".to_owned()), None))?;
 							}
 							recog.base.set_state(13);
-							let tmp = recog.base.match_token(ADD,&mut recog.err_handler)?;
+							let tmp = recog.base.match_token(Expr_ADD,&mut recog.err_handler)?;
 							 cast_mut::<_,EContext >(&mut _localctx).op = Some(tmp.clone());
 							  
 
@@ -526,36 +529,29 @@ where
 		Ok(_localctx)
 	}
 }
-
-lazy_static! {
+	lazy_static!{
     static ref _ATN: Arc<ATN> =
-        Arc::new(ATNDeserializer::new(None).deserialize(_serializedATN.chars()));
-    static ref _decision_to_DFA: Arc<Vec<antlr_rust::RwLock<DFA>>> = {
+        Arc::new(ATNDeserializer::new(None).deserialize(&mut _serializedATN.into_iter()));
+    static ref _decision_to_DFA: Arc<Vec<antlr4rust::RwLock<DFA>>> = {
         let mut dfa = Vec::new();
-        let size = _ATN.decision_to_state.len();
+        let size = _ATN.decision_to_state.len() as i32;
         for i in 0..size {
             dfa.push(DFA::new(
                 _ATN.clone(),
                 _ATN.get_decision_state(i),
-                i as isize,
+                i,
             ).into())
         }
         Arc::new(dfa)
     };
-}
-
-
-
-const _serializedATN:&'static str =
-	"\x03\u{608b}\u{a72a}\u{8133}\u{b9ed}\u{417c}\u{3be7}\u{7786}\u{5964}\x03\
-	\x06\x17\x04\x02\x09\x02\x04\x03\x09\x03\x03\x02\x03\x02\x03\x03\x03\x03\
-	\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x07\x03\x12\x0a\
-	\x03\x0c\x03\x0e\x03\x15\x0b\x03\x03\x03\x02\x03\x04\x04\x02\x04\x02\x02\
-	\x02\x16\x02\x06\x03\x02\x02\x02\x04\x08\x03\x02\x02\x02\x06\x07\x05\x04\
-	\x03\x02\x07\x03\x03\x02\x02\x02\x08\x09\x08\x03\x01\x02\x09\x0a\x07\x05\
-	\x02\x02\x0a\x13\x03\x02\x02\x02\x0b\x0c\x0c\x05\x02\x02\x0c\x0d\x07\x03\
-	\x02\x02\x0d\x12\x05\x04\x03\x06\x0e\x0f\x0c\x04\x02\x02\x0f\x10\x07\x04\
-	\x02\x02\x10\x12\x05\x04\x03\x05\x11\x0b\x03\x02\x02\x02\x11\x0e\x03\x02\
-	\x02\x02\x12\x15\x03\x02\x02\x02\x13\x11\x03\x02\x02\x02\x13\x14\x03\x02\
-	\x02\x02\x14\x05\x03\x02\x02\x02\x15\x13\x03\x02\x02\x02\x04\x11\x13";
-
+    }
+const _serializedATN: [i32; 180] = [
+	4, 1, 4, 21, 2, 0, 7, 0, 2, 1, 7, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 
+	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5, 1, 16, 8, 1, 10, 1, 12, 1, 19, 9, 1, 1, 
+	1, 0, 1, 2, 2, 0, 2, 0, 0, 20, 0, 4, 1, 0, 0, 0, 2, 6, 1, 0, 0, 0, 4, 5, 
+	3, 2, 1, 0, 5, 1, 1, 0, 0, 0, 6, 7, 6, 1, -1, 0, 7, 8, 5, 3, 0, 0, 8, 17, 
+	1, 0, 0, 0, 9, 10, 10, 3, 0, 0, 10, 11, 5, 1, 0, 0, 11, 16, 3, 2, 1, 4, 
+	12, 13, 10, 2, 0, 0, 13, 14, 5, 2, 0, 0, 14, 16, 3, 2, 1, 3, 15, 9, 1, 
+	0, 0, 0, 15, 12, 1, 0, 0, 0, 16, 19, 1, 0, 0, 0, 17, 15, 1, 0, 0, 0, 17, 
+	18, 1, 0, 0, 0, 18, 3, 1, 0, 0, 0, 19, 17, 1, 0, 0, 0, 2, 15, 17
+];

@@ -1,14 +1,14 @@
 use std::cell::RefCell;
 use std::rc::Rc;
 
-use antlr_rust::common_token_stream::CommonTokenStream;
-use antlr_rust::errors::ANTLRError;
-use antlr_rust::parser::ParserNodeType;
-use antlr_rust::parser_rule_context::BaseParserRuleContext;
-use antlr_rust::rule_context::CustomRuleContext;
-use antlr_rust::token_factory::CommonTokenFactory;
-use antlr_rust::tree::{ParseTreeListener, ParseTreeWalker};
-use antlr_rust::{tree::ParseTree, InputStream};
+use antlr4rust::common_token_stream::CommonTokenStream;
+use antlr4rust::errors::ANTLRError;
+use antlr4rust::parser::ParserNodeType;
+use antlr4rust::parser_rule_context::BaseParserRuleContext;
+use antlr4rust::rule_context::CustomRuleContext;
+use antlr4rust::token_factory::CommonTokenFactory;
+use antlr4rust::tree::{ParseTreeListener, ParseTreeWalker};
+use antlr4rust::{tree::ParseTree, InputStream};
 use starter::{ArrayInitLexer, ArrayInitListener, ArrayInitParser, ArrayInitParserContextType, InitContext, InitContextExt, ValueContext, ValueContextAttrs};
 
 

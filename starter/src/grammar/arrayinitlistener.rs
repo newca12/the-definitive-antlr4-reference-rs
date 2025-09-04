@@ -1,6 +1,6 @@
 #![allow(nonstandard_style)]
-// Generated from ArrayInit.g4 by ANTLR 4.8
-use antlr_rust::tree::ParseTreeListener;
+// Generated from ArrayInit.g4 by ANTLR 4.13.2
+use antlr4rust::tree::ParseTreeListener;
 use super::arrayinitparser::*;
 
 pub trait ArrayInitListener<'input> : ParseTreeListener<'input,ArrayInitParserContextType>{
@@ -27,6 +27,6 @@ fn exit_value(&mut self, _ctx: &ValueContext<'input>) { }
 
 }
 
-antlr_rust::coerce_from!{ 'input : ArrayInitListener<'input> }
+antlr4rust::coerce_from!{ 'input : ArrayInitListener<'input> }
 
 

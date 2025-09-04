@@ -1,9 +1,9 @@
 use std::{env, fs};
 
-use antlr_rust::common_token_stream::CommonTokenStream;
-use antlr_rust::token_factory::CommonTokenFactory;
-use antlr_rust::tree::ParseTreeListener;
-use antlr_rust::{tree::ParseTree, InputStream};
+use antlr4rust::common_token_stream::CommonTokenStream;
+use antlr4rust::token_factory::CommonTokenFactory;
+use antlr4rust::tree::ParseTreeListener;
+use antlr4rust::{tree::ParseTree, InputStream};
 use listeners::{
     PropContext, PropContextAttrs, PropertyFileLexer, PropertyFileListener, PropertyFileParser,
     PropertyFileParserContextType, PropertyFileTreeWalker,

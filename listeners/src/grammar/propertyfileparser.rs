@@ -1,4 +1,4 @@
-// Generated from PropertyFile.g4 by ANTLR 4.8
+// Generated from PropertyFile.g4 by ANTLR 4.13.2
 #![allow(dead_code)]
 #![allow(non_snake_case)]
 #![allow(non_upper_case_globals)]
@@ -6,29 +6,29 @@
 #![allow(unused_imports)]
 #![allow(unused_mut)]
 #![allow(unused_braces)]
-use antlr_rust::PredictionContextCache;
-use antlr_rust::parser::{Parser, BaseParser, ParserRecog, ParserNodeType};
-use antlr_rust::token_stream::TokenStream;
-use antlr_rust::TokenSource;
-use antlr_rust::parser_atn_simulator::ParserATNSimulator;
-use antlr_rust::errors::*;
-use antlr_rust::rule_context::{BaseRuleContext, CustomRuleContext, RuleContext};
-use antlr_rust::recognizer::{Recognizer,Actions};
-use antlr_rust::atn_deserializer::ATNDeserializer;
-use antlr_rust::dfa::DFA;
-use antlr_rust::atn::{ATN, INVALID_ALT};
-use antlr_rust::error_strategy::{ErrorStrategy, DefaultErrorStrategy};
-use antlr_rust::parser_rule_context::{BaseParserRuleContext, ParserRuleContext,cast,cast_mut};
-use antlr_rust::tree::*;
-use antlr_rust::token::{TOKEN_EOF,OwningToken,Token};
-use antlr_rust::int_stream::EOF;
-use antlr_rust::vocabulary::{Vocabulary,VocabularyImpl};
-use antlr_rust::token_factory::{CommonTokenFactory,TokenFactory, TokenAware};
+use antlr4rust::PredictionContextCache;
+use antlr4rust::parser::{Parser, BaseParser, ParserRecog, ParserNodeType};
+use antlr4rust::token_stream::TokenStream;
+use antlr4rust::TokenSource;
+use antlr4rust::parser_atn_simulator::ParserATNSimulator;
+use antlr4rust::errors::*;
+use antlr4rust::rule_context::{BaseRuleContext, CustomRuleContext, RuleContext};
+use antlr4rust::recognizer::{Recognizer,Actions};
+use antlr4rust::atn_deserializer::ATNDeserializer;
+use antlr4rust::dfa::DFA;
+use antlr4rust::atn::{ATN, INVALID_ALT};
+use antlr4rust::error_strategy::{ErrorStrategy, DefaultErrorStrategy};
+use antlr4rust::parser_rule_context::{BaseParserRuleContext, ParserRuleContext,cast,cast_mut};
+use antlr4rust::tree::*;
+use antlr4rust::token::{TOKEN_EOF,OwningToken,Token};
+use antlr4rust::int_stream::EOF;
+use antlr4rust::vocabulary::{Vocabulary,VocabularyImpl};
+use antlr4rust::token_factory::{CommonTokenFactory,TokenFactory, TokenAware};
 use super::propertyfilelistener::*;
 use super::propertyfilevisitor::*;
 
-use antlr_rust::lazy_static;
-use antlr_rust::{TidAble,TidExt};
+use antlr4rust::lazy_static;
+use antlr4rust::{TidAble,TidExt};
 
 use std::marker::PhantomData;
 use std::sync::Arc;
@@ -39,10 +39,11 @@ use std::ops::{DerefMut, Deref};
 use std::borrow::{Borrow,BorrowMut};
 use std::any::{Any,TypeId};
 
-		pub const T__0:isize=1; 
-		pub const T__1:isize=2; 
-		pub const ID:isize=3; 
-		pub const STRING:isize=4;
+		pub const PropertyFile_T__0:i32=1; 
+		pub const PropertyFile_T__1:i32=2; 
+		pub const PropertyFile_ID:i32=3; 
+		pub const PropertyFile_STRING:i32=4;
+	pub const PropertyFile_EOF:i32=EOF;
 	pub const RULE_file:usize = 0; 
 	pub const RULE_prop:usize = 1;
 	pub const ruleNames: [&'static str; 2] =  [
@@ -51,7 +52,7 @@ use std::any::{Any,TypeId};
 
 
 	pub const _LITERAL_NAMES: [Option<&'static str>;3] = [
-		None, Some("'='"), Some("'\n'")
+		None, Some("'='"), Some("'\\n'")
 	];
 	pub const _SYMBOLIC_NAMES: [Option<&'static str>;5]  = [
 		None, None, None, Some("ID"), Some("STRING")
@@ -88,14 +89,13 @@ where
     I: TokenStream<'input, TF = LocalTokenFactory<'input> > + TidAble<'input>,
     H: ErrorStrategy<'input,BaseParserType<'input,I>>
 {
-	pub fn get_serialized_atn() -> &'static str { _serializedATN }
 
     pub fn set_error_strategy(&mut self, strategy: H) {
         self.err_handler = strategy
     }
 
     pub fn with_strategy(input: I, strategy: H) -> Self {
-		antlr_rust::recognizer::check_version("0","3");
+		antlr4rust::recognizer::check_version("0","3");
 		let interpreter = Arc::new(ParserATNSimulator::new(
 			_ATN.clone(),
 			_decision_to_DFA.clone(),
@@ -144,7 +144,7 @@ pub trait PropertyFileParserContext<'input>:
 	ParserRuleContext<'input, TF=LocalTokenFactory<'input>, Ctx=PropertyFileParserContextType>
 {}
 
-antlr_rust::coerce_from!{ 'input : PropertyFileParserContext<'input> }
+antlr4rust::coerce_from!{ 'input : PropertyFileParserContext<'input> }
 
 impl<'input, 'x, T> VisitableDyn<T> for dyn PropertyFileParserContext<'input> + 'input
 where
@@ -158,12 +158,12 @@ where
 impl<'input> PropertyFileParserContext<'input> for TerminalNode<'input,PropertyFileParserContextType> {}
 impl<'input> PropertyFileParserContext<'input> for ErrorNode<'input,PropertyFileParserContextType> {}
 
-antlr_rust::tid! { impl<'input> TidAble<'input> for dyn PropertyFileParserContext<'input> + 'input }
+antlr4rust::tid! { impl<'input> TidAble<'input> for dyn PropertyFileParserContext<'input> + 'input }
 
-antlr_rust::tid! { impl<'input> TidAble<'input> for dyn PropertyFileListener<'input> + 'input }
+antlr4rust::tid! { impl<'input> TidAble<'input> for dyn PropertyFileListener<'input> + 'input }
 
 pub struct PropertyFileParserContextType;
-antlr_rust::tid!{PropertyFileParserContextType}
+antlr4rust::tid!{PropertyFileParserContextType}
 
 impl<'input> ParserNodeType<'input> for PropertyFileParserContextType{
 	type TF = LocalTokenFactory<'input>;
@@ -198,7 +198,7 @@ pub struct PropertyFileParserExt<'input>{
 
 impl<'input> PropertyFileParserExt<'input>{
 }
-antlr_rust::tid! { PropertyFileParserExt<'a> }
+antlr4rust::tid! { PropertyFileParserExt<'a> }
 
 impl<'input> TokenAware<'input> for PropertyFileParserExt<'input>{
 	type TF = LocalTokenFactory<'input>;
@@ -249,12 +249,13 @@ impl<'input> CustomRuleContext<'input> for FileContextExt<'input>{
 	fn get_rule_index(&self) -> usize { RULE_file }
 	//fn type_rule_index() -> usize where Self: Sized { RULE_file }
 }
-antlr_rust::tid!{FileContextExt<'a>}
+antlr4rust::tid!{FileContextExt<'a>}
 
 impl<'input> FileContextExt<'input>{
-	fn new(parent: Option<Rc<dyn PropertyFileParserContext<'input> + 'input > >, invoking_state: isize) -> Rc<FileContextAll<'input>> {
+	fn new(parent: Option<Rc<dyn PropertyFileParserContext<'input> + 'input > >, invoking_state: i32) -> Rc<FileContextAll<'input>> {
 		Rc::new(
 			BaseParserRuleContext::new_parser_ctx(parent, invoking_state,FileContextExt{
+
 				ph:PhantomData
 			}),
 		)
@@ -286,7 +287,7 @@ where
 		let mut _localctx = FileContextExt::new(_parentctx.clone(), recog.base.get_state());
         recog.base.enter_rule(_localctx.clone(), 0, RULE_file);
         let mut _localctx: Rc<FileContextAll> = _localctx;
-		let mut _la: isize = -1;
+		let mut _la: i32 = -1;
 		let result: Result<(), ANTLRError> = (|| {
 
 			//recog.base.enter_outer_alt(_localctx.clone(), 1);
@@ -307,7 +308,7 @@ where
 				recog.base.set_state(7); 
 				recog.err_handler.sync(&mut recog.base)?;
 				_la = recog.base.input.la(1);
-				if !(_la==ID) {break}
+				if !(_la==PropertyFile_ID) {break}
 			}
 			}
 			Ok(())
@@ -362,12 +363,13 @@ impl<'input> CustomRuleContext<'input> for PropContextExt<'input>{
 	fn get_rule_index(&self) -> usize { RULE_prop }
 	//fn type_rule_index() -> usize where Self: Sized { RULE_prop }
 }
-antlr_rust::tid!{PropContextExt<'a>}
+antlr4rust::tid!{PropContextExt<'a>}
 
 impl<'input> PropContextExt<'input>{
-	fn new(parent: Option<Rc<dyn PropertyFileParserContext<'input> + 'input > >, invoking_state: isize) -> Rc<PropContextAll<'input>> {
+	fn new(parent: Option<Rc<dyn PropertyFileParserContext<'input> + 'input > >, invoking_state: i32) -> Rc<PropContextAll<'input>> {
 		Rc::new(
 			BaseParserRuleContext::new_parser_ctx(parent, invoking_state,PropContextExt{
+
 				ph:PhantomData
 			}),
 		)
@@ -379,12 +381,12 @@ pub trait PropContextAttrs<'input>: PropertyFileParserContext<'input> + BorrowMu
 /// Retrieves first TerminalNode corresponding to token ID
 /// Returns `None` if there is no child corresponding to token ID
 fn ID(&self) -> Option<Rc<TerminalNode<'input,PropertyFileParserContextType>>> where Self:Sized{
-	self.get_token(ID, 0)
+	self.get_token(PropertyFile_ID, 0)
 }
 /// Retrieves first TerminalNode corresponding to token STRING
 /// Returns `None` if there is no child corresponding to token STRING
 fn STRING(&self) -> Option<Rc<TerminalNode<'input,PropertyFileParserContextType>>> where Self:Sized{
-	self.get_token(STRING, 0)
+	self.get_token(PropertyFile_STRING, 0)
 }
 
 }
@@ -409,16 +411,16 @@ where
 			recog.base.enter_outer_alt(None, 1);
 			{
 			recog.base.set_state(9);
-			recog.base.match_token(ID,&mut recog.err_handler)?;
+			recog.base.match_token(PropertyFile_ID,&mut recog.err_handler)?;
 
 			recog.base.set_state(10);
-			recog.base.match_token(T__0,&mut recog.err_handler)?;
+			recog.base.match_token(PropertyFile_T__0,&mut recog.err_handler)?;
 
 			recog.base.set_state(11);
-			recog.base.match_token(STRING,&mut recog.err_handler)?;
+			recog.base.match_token(PropertyFile_STRING,&mut recog.err_handler)?;
 
 			recog.base.set_state(12);
-			recog.base.match_token(T__1,&mut recog.err_handler)?;
+			recog.base.match_token(PropertyFile_T__1,&mut recog.err_handler)?;
 
 			}
 			Ok(())
@@ -437,33 +439,27 @@ where
 		Ok(_localctx)
 	}
 }
-
-lazy_static! {
+	lazy_static!{
     static ref _ATN: Arc<ATN> =
-        Arc::new(ATNDeserializer::new(None).deserialize(_serializedATN.chars()));
-    static ref _decision_to_DFA: Arc<Vec<antlr_rust::RwLock<DFA>>> = {
+        Arc::new(ATNDeserializer::new(None).deserialize(&mut _serializedATN.into_iter()));
+    static ref _decision_to_DFA: Arc<Vec<antlr4rust::RwLock<DFA>>> = {
         let mut dfa = Vec::new();
-        let size = _ATN.decision_to_state.len();
+        let size = _ATN.decision_to_state.len() as i32;
         for i in 0..size {
             dfa.push(DFA::new(
                 _ATN.clone(),
                 _ATN.get_decision_state(i),
-                i as isize,
+                i,
             ).into())
         }
         Arc::new(dfa)
     };
-}
-
-
-
-const _serializedATN:&'static str =
-	"\x03\u{608b}\u{a72a}\u{8133}\u{b9ed}\u{417c}\u{3be7}\u{7786}\u{5964}\x03\
-	\x06\x11\x04\x02\x09\x02\x04\x03\x09\x03\x03\x02\x06\x02\x08\x0a\x02\x0d\
-	\x02\x0e\x02\x09\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x03\x02\x02\
-	\x04\x02\x04\x02\x02\x02\x0f\x02\x07\x03\x02\x02\x02\x04\x0b\x03\x02\x02\
-	\x02\x06\x08\x05\x04\x03\x02\x07\x06\x03\x02\x02\x02\x08\x09\x03\x02\x02\
-	\x02\x09\x07\x03\x02\x02\x02\x09\x0a\x03\x02\x02\x02\x0a\x03\x03\x02\x02\
-	\x02\x0b\x0c\x07\x05\x02\x02\x0c\x0d\x07\x03\x02\x02\x0d\x0e\x07\x06\x02\
-	\x02\x0e\x0f\x07\x04\x02\x02\x0f\x05\x03\x02\x02\x02\x03\x09";
-
+    }
+const _serializedATN: [i32; 124] = [
+	4, 1, 4, 15, 2, 0, 7, 0, 2, 1, 7, 1, 1, 0, 4, 0, 6, 8, 0, 11, 0, 12, 0, 
+	7, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 2, 0, 2, 0, 0, 13, 0, 5, 1, 
+	0, 0, 0, 2, 9, 1, 0, 0, 0, 4, 6, 3, 2, 1, 0, 5, 4, 1, 0, 0, 0, 6, 7, 1, 
+	0, 0, 0, 7, 5, 1, 0, 0, 0, 7, 8, 1, 0, 0, 0, 8, 1, 1, 0, 0, 0, 9, 10, 5, 
+	3, 0, 0, 10, 11, 5, 1, 0, 0, 11, 12, 5, 4, 0, 0, 12, 13, 5, 2, 0, 0, 13, 
+	3, 1, 0, 0, 0, 1, 7
+];

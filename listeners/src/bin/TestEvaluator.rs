@@ -1,11 +1,11 @@
 use std::any::Any;
 use std::borrow::Cow;
 
-use antlr_rust::rule_context::RuleContext;
-use antlr_rust::token::Token;
-use antlr_rust::tree::{ParseTree, ParseTreeListener, ParseTreeVisitor, Tree, Visitable};
-use antlr_rust::InputStream;
-use antlr_rust::{common_token_stream::CommonTokenStream, token_factory::CommonTokenFactory};
+use antlr4rust::rule_context::RuleContext;
+use antlr4rust::token::Token;
+use antlr4rust::tree::{ParseTree, ParseTreeListener, ParseTreeVisitor, Tree, Visitable};
+use antlr4rust::InputStream;
+use antlr4rust::{common_token_stream::CommonTokenStream, token_factory::CommonTokenFactory};
 
 use listeners::{EContext, ExprLexer, ExprListener, ExprParser, ExprParserContextType, ExprTreeWalker, ExprVisitor, SContext, exprparser};
 
@@ -27,9 +27,9 @@ pub struct EvaluatorParser {
 
 
 impl<'i> ParseTreeVisitor<'i, ExprParserContextType> for EvaluatorParser {
-    fn visit_terminal(&mut self, node: &antlr_rust::tree::TerminalNode<'i, ExprParserContextType>) {
+    fn visit_terminal(&mut self, node: &antlr4rust::tree::TerminalNode<'i, ExprParserContextType>) {
         println!("visit");
-        if node.symbol.get_token_type() == exprparser::INT {
+        if node.symbol.get_token_type() == exprparser::Expr_INT {
             println!("push"); 
             self.evaluator.stack.push(node.get_text().parse::<i64>().unwrap());
             //if let Cow::Borrowed(s) = node.symbol.text {

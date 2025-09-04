@@ -1,6 +1,6 @@
 #![allow(nonstandard_style)]
-// Generated from PropertyFile.g4 by ANTLR 4.8
-use antlr_rust::tree::ParseTreeListener;
+// Generated from PropertyFile.g4 by ANTLR 4.13.2
+use antlr4rust::tree::ParseTreeListener;
 use super::propertyfileparser::*;
 
 pub trait PropertyFileListener<'input> : ParseTreeListener<'input,PropertyFileParserContextType>{
@@ -27,6 +27,6 @@ fn exit_prop(&mut self, _ctx: &PropContext<'input>) { }
 
 }
 
-antlr_rust::coerce_from!{ 'input : PropertyFileListener<'input> }
+antlr4rust::coerce_from!{ 'input : PropertyFileListener<'input> }
 
 
