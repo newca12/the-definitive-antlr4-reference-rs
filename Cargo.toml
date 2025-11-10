@@ -5,6 +5,9 @@ authors = ["Olivier ROLAND <newca12@users.noreply.github.com>"]
 edition = "2024"
 license = "GPL-3.0-or-later"
 
+[workspace.dependencies]
+antlr4rust = "0.5.2"
+
 [workspace]
 members = [
     "starter",

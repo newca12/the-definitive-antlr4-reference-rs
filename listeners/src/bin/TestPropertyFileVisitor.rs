@@ -1,5 +1,5 @@
-use antlr4rust::tree::{ParseTree, ParseTreeVisitorCompat, Visitable};
 use antlr4rust::InputStream;
+use antlr4rust::tree::{ParseTree, ParseTreeVisitorCompat, Visitable};
 use antlr4rust::{common_token_stream::CommonTokenStream, token_factory::CommonTokenFactory};
 use listeners::{
     PropContext, PropContextAttrs, PropertyFileLexer, PropertyFileParser,

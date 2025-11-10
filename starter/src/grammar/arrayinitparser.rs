@@ -72,29 +72,26 @@ pub type ArrayInitTreeWalker<'input,'a> =
 	ParseTreeWalker<'input, 'a, ArrayInitParserContextType , dyn ArrayInitListener<'input> + 'a>;
 
 /// Parser for ArrayInit grammar
-pub struct ArrayInitParser<'input,I,H>
+pub struct ArrayInitParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input> > + TidAble<'input>,
-    H: ErrorStrategy<'input,BaseParserType<'input,I>>
 {
 	base:BaseParserType<'input,I>,
 	interpreter:Arc<ParserATNSimulator>,
 	_shared_context_cache: Box<PredictionContextCache>,
-    pub err_handler: H,
+    pub err_handler: Box<dyn ErrorStrategy<'input,BaseParserType<'input,I> > >,
 }
 
-impl<'input, I, H> ArrayInitParser<'input, I, H>
+impl<'input, I> ArrayInitParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input> > + TidAble<'input>,
-    H: ErrorStrategy<'input,BaseParserType<'input,I>>
 {
-
-    pub fn set_error_strategy(&mut self, strategy: H) {
+    pub fn set_error_strategy(&mut self, strategy: Box<dyn ErrorStrategy<'input,BaseParserType<'input,I> > >) {
         self.err_handler = strategy
     }
 
-    pub fn with_strategy(input: I, strategy: H) -> Self {
-		antlr4rust::recognizer::check_version("0","3");
+    pub fn with_strategy(input: I, strategy: Box<dyn ErrorStrategy<'input,BaseParserType<'input,I> > >) -> Self {
+		antlr4rust::recognizer::check_version("0","5");
 		let interpreter = Arc::new(ParserATNSimulator::new(
 			_ATN.clone(),
 			_decision_to_DFA.clone(),
@@ -118,7 +115,7 @@ where
 
 type DynStrategy<'input,I> = Box<dyn ErrorStrategy<'input,BaseParserType<'input,I>> + 'input>;
 
-impl<'input, I> ArrayInitParser<'input, I, DynStrategy<'input,I>>
+impl<'input, I> ArrayInitParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input> > + TidAble<'input>,
 {
@@ -127,12 +124,12 @@ where
     }
 }
 
-impl<'input, I> ArrayInitParser<'input, I, DefaultErrorStrategy<'input,ArrayInitParserContextType>>
+impl<'input, I> ArrayInitParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input> > + TidAble<'input>,
 {
     pub fn new(input: I) -> Self{
-    	Self::with_strategy(input,DefaultErrorStrategy::new())
+    	Self::with_strategy(input,Box::new(DefaultErrorStrategy::new()))
     }
 }
 
@@ -159,10 +156,9 @@ impl<'input> ParserNodeType<'input> for ArrayInitParserContextType{
 	type Type = dyn ArrayInitParserContext<'input> + 'input;
 }
 
-impl<'input, I, H> Deref for ArrayInitParser<'input, I, H>
+impl<'input, I> Deref for ArrayInitParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input> > + TidAble<'input>,
-    H: ErrorStrategy<'input,BaseParserType<'input,I>>
 {
     type Target = BaseParserType<'input,I>;
 
@@ -171,10 +167,9 @@ where
     }
 }
 
-impl<'input, I, H> DerefMut for ArrayInitParser<'input, I, H>
+impl<'input, I> DerefMut for ArrayInitParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input> > + TidAble<'input>,
-    H: ErrorStrategy<'input,BaseParserType<'input,I>>
 {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.base
@@ -216,12 +211,14 @@ ph:PhantomData<&'input str>
 impl<'input> ArrayInitParserContext<'input> for InitContext<'input>{}
 
 impl<'input,'a> Listenable<dyn ArrayInitListener<'input> + 'a> for InitContext<'input>{
-		fn enter(&self,listener: &mut (dyn ArrayInitListener<'input> + 'a)) {
-			listener.enter_every_rule(self);
+		fn enter(&self,listener: &mut (dyn ArrayInitListener<'input> + 'a)) -> Result<(), ANTLRError> {
+			listener.enter_every_rule(self)?;
 			listener.enter_init(self);
-		}fn exit(&self,listener: &mut (dyn ArrayInitListener<'input> + 'a)) {
+			Ok(())
+		}fn exit(&self,listener: &mut (dyn ArrayInitListener<'input> + 'a)) -> Result<(), ANTLRError> {
 			listener.exit_init(self);
-			listener.exit_every_rule(self);
+			listener.exit_every_rule(self)?;
+			Ok(())
 		}
 }
 
@@ -257,10 +254,9 @@ fn value(&self, i: usize) -> Option<Rc<ValueContextAll<'input>>> where Self:Size
 
 impl<'input> InitContextAttrs<'input> for InitContext<'input>{}
 
-impl<'input, I, H> ArrayInitParser<'input, I, H>
+impl<'input, I> ArrayInitParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input> > + TidAble<'input>,
-    H: ErrorStrategy<'input,BaseParserType<'input,I>>
 {
 	pub fn init(&mut self,)
 	-> Result<Rc<InitContextAll<'input>>,ANTLRError> {
@@ -272,8 +268,8 @@ where
 		let mut _la: i32 = -1;
 		let result: Result<(), ANTLRError> = (|| {
 
-			//recog.base.enter_outer_alt(_localctx.clone(), 1);
-			recog.base.enter_outer_alt(None, 1);
+			//recog.base.enter_outer_alt(_localctx.clone(), 1)?;
+			recog.base.enter_outer_alt(None, 1)?;
 			{
 			recog.base.set_state(4);
 			recog.base.match_token(ArrayInit_T__0,&mut recog.err_handler)?;
@@ -316,7 +312,7 @@ where
 				recog.err_handler.recover(&mut recog.base, re)?;
 			}
 		}
-		recog.base.exit_rule();
+		recog.base.exit_rule()?;
 
 		Ok(_localctx)
 	}
@@ -335,12 +331,14 @@ ph:PhantomData<&'input str>
 impl<'input> ArrayInitParserContext<'input> for ValueContext<'input>{}
 
 impl<'input,'a> Listenable<dyn ArrayInitListener<'input> + 'a> for ValueContext<'input>{
-		fn enter(&self,listener: &mut (dyn ArrayInitListener<'input> + 'a)) {
-			listener.enter_every_rule(self);
+		fn enter(&self,listener: &mut (dyn ArrayInitListener<'input> + 'a)) -> Result<(), ANTLRError> {
+			listener.enter_every_rule(self)?;
 			listener.enter_value(self);
-		}fn exit(&self,listener: &mut (dyn ArrayInitListener<'input> + 'a)) {
+			Ok(())
+		}fn exit(&self,listener: &mut (dyn ArrayInitListener<'input> + 'a)) -> Result<(), ANTLRError> {
 			listener.exit_value(self);
-			listener.exit_every_rule(self);
+			listener.exit_every_rule(self)?;
+			Ok(())
 		}
 }
 
@@ -378,10 +376,9 @@ fn INT(&self) -> Option<Rc<TerminalNode<'input,ArrayInitParserContextType>>> whe
 
 impl<'input> ValueContextAttrs<'input> for ValueContext<'input>{}
 
-impl<'input, I, H> ArrayInitParser<'input, I, H>
+impl<'input, I> ArrayInitParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input> > + TidAble<'input>,
-    H: ErrorStrategy<'input,BaseParserType<'input,I>>
 {
 	pub fn value(&mut self,)
 	-> Result<Rc<ValueContextAll<'input>>,ANTLRError> {
@@ -397,8 +394,8 @@ where
 			match recog.base.input.la(1) {
 			ArrayInit_T__0 
 				=> {
-					//recog.base.enter_outer_alt(_localctx.clone(), 1);
-					recog.base.enter_outer_alt(None, 1);
+					//recog.base.enter_outer_alt(_localctx.clone(), 1)?;
+					recog.base.enter_outer_alt(None, 1)?;
 					{
 					/*InvokeRule init*/
 					recog.base.set_state(15);
@@ -409,8 +406,8 @@ where
 
 			ArrayInit_INT 
 				=> {
-					//recog.base.enter_outer_alt(_localctx.clone(), 2);
-					recog.base.enter_outer_alt(None, 2);
+					//recog.base.enter_outer_alt(_localctx.clone(), 2)?;
+					recog.base.enter_outer_alt(None, 2)?;
 					{
 					recog.base.set_state(16);
 					recog.base.match_token(ArrayInit_INT,&mut recog.err_handler)?;
@@ -431,14 +428,14 @@ where
 				recog.err_handler.recover(&mut recog.base, re)?;
 			}
 		}
-		recog.base.exit_rule();
+		recog.base.exit_rule()?;
 
 		Ok(_localctx)
 	}
 }
 	lazy_static!{
     static ref _ATN: Arc<ATN> =
-        Arc::new(ATNDeserializer::new(None).deserialize(&mut _serializedATN.into_iter()));
+        Arc::new(ATNDeserializer::new(None).deserialize(&mut _serializedATN.iter()));
     static ref _decision_to_DFA: Arc<Vec<antlr4rust::RwLock<DFA>>> = {
         let mut dfa = Vec::new();
         let size = _ATN.decision_to_state.len() as i32;
@@ -451,14 +448,14 @@ where
         }
         Arc::new(dfa)
     };
-    }
-const _serializedATN: [i32; 172] = [
-	4, 1, 5, 20, 2, 0, 7, 0, 2, 1, 7, 1, 1, 0, 1, 0, 1, 0, 1, 0, 5, 0, 9, 8, 
-	0, 10, 0, 12, 0, 12, 9, 0, 1, 0, 1, 0, 1, 1, 1, 1, 3, 1, 18, 8, 1, 1, 1, 
-	0, 0, 2, 0, 2, 0, 0, 19, 0, 4, 1, 0, 0, 0, 2, 17, 1, 0, 0, 0, 4, 5, 5, 
-	1, 0, 0, 5, 10, 3, 2, 1, 0, 6, 7, 5, 2, 0, 0, 7, 9, 3, 2, 1, 0, 8, 6, 1, 
-	0, 0, 0, 9, 12, 1, 0, 0, 0, 10, 8, 1, 0, 0, 0, 10, 11, 1, 0, 0, 0, 11, 
-	13, 1, 0, 0, 0, 12, 10, 1, 0, 0, 0, 13, 14, 5, 3, 0, 0, 14, 1, 1, 0, 0, 
-	0, 15, 18, 3, 0, 0, 0, 16, 18, 5, 4, 0, 0, 17, 15, 1, 0, 0, 0, 17, 16, 
-	1, 0, 0, 0, 18, 3, 1, 0, 0, 0, 2, 10, 17
-];
+	static ref _serializedATN: Vec<i32> = vec![
+		4, 1, 5, 20, 2, 0, 7, 0, 2, 1, 7, 1, 1, 0, 1, 0, 1, 0, 1, 0, 5, 0, 9, 
+		8, 0, 10, 0, 12, 0, 12, 9, 0, 1, 0, 1, 0, 1, 1, 1, 1, 3, 1, 18, 8, 1, 
+		1, 1, 0, 0, 2, 0, 2, 0, 0, 19, 0, 4, 1, 0, 0, 0, 2, 17, 1, 0, 0, 0, 4, 
+		5, 5, 1, 0, 0, 5, 10, 3, 2, 1, 0, 6, 7, 5, 2, 0, 0, 7, 9, 3, 2, 1, 0, 
+		8, 6, 1, 0, 0, 0, 9, 12, 1, 0, 0, 0, 10, 8, 1, 0, 0, 0, 10, 11, 1, 0, 
+		0, 0, 11, 13, 1, 0, 0, 0, 12, 10, 1, 0, 0, 0, 13, 14, 5, 3, 0, 0, 14, 
+		1, 1, 0, 0, 0, 15, 18, 3, 0, 0, 0, 16, 18, 5, 4, 0, 0, 17, 15, 1, 0, 0, 
+		0, 17, 16, 1, 0, 0, 0, 18, 3, 1, 0, 0, 0, 2, 10, 17
+	];
+}

@@ -73,29 +73,26 @@ pub type ExprTreeWalker<'input,'a> =
 	ParseTreeWalker<'input, 'a, ExprParserContextType , dyn ExprListener<'input> + 'a>;
 
 /// Parser for Expr grammar
-pub struct ExprParser<'input,I,H>
+pub struct ExprParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input> > + TidAble<'input>,
-    H: ErrorStrategy<'input,BaseParserType<'input,I>>
 {
 	base:BaseParserType<'input,I>,
 	interpreter:Arc<ParserATNSimulator>,
 	_shared_context_cache: Box<PredictionContextCache>,
-    pub err_handler: H,
+    pub err_handler: Box<dyn ErrorStrategy<'input,BaseParserType<'input,I> > >,
 }
 
-impl<'input, I, H> ExprParser<'input, I, H>
+impl<'input, I> ExprParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input> > + TidAble<'input>,
-    H: ErrorStrategy<'input,BaseParserType<'input,I>>
 {
-
-    pub fn set_error_strategy(&mut self, strategy: H) {
+    pub fn set_error_strategy(&mut self, strategy: Box<dyn ErrorStrategy<'input,BaseParserType<'input,I> > >) {
         self.err_handler = strategy
     }
 
-    pub fn with_strategy(input: I, strategy: H) -> Self {
-		antlr4rust::recognizer::check_version("0","3");
+    pub fn with_strategy(input: I, strategy: Box<dyn ErrorStrategy<'input,BaseParserType<'input,I> > >) -> Self {
+		antlr4rust::recognizer::check_version("0","5");
 		let interpreter = Arc::new(ParserATNSimulator::new(
 			_ATN.clone(),
 			_decision_to_DFA.clone(),
@@ -119,7 +116,7 @@ where
 
 type DynStrategy<'input,I> = Box<dyn ErrorStrategy<'input,BaseParserType<'input,I>> + 'input>;
 
-impl<'input, I> ExprParser<'input, I, DynStrategy<'input,I>>
+impl<'input, I> ExprParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input> > + TidAble<'input>,
 {
@@ -128,12 +125,12 @@ where
     }
 }
 
-impl<'input, I> ExprParser<'input, I, DefaultErrorStrategy<'input,ExprParserContextType>>
+impl<'input, I> ExprParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input> > + TidAble<'input>,
 {
     pub fn new(input: I) -> Self{
-    	Self::with_strategy(input,DefaultErrorStrategy::new())
+    	Self::with_strategy(input,Box::new(DefaultErrorStrategy::new()))
     }
 }
 
@@ -170,10 +167,9 @@ impl<'input> ParserNodeType<'input> for ExprParserContextType{
 	type Type = dyn ExprParserContext<'input> + 'input;
 }
 
-impl<'input, I, H> Deref for ExprParser<'input, I, H>
+impl<'input, I> Deref for ExprParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input> > + TidAble<'input>,
-    H: ErrorStrategy<'input,BaseParserType<'input,I>>
 {
     type Target = BaseParserType<'input,I>;
 
@@ -182,10 +178,9 @@ where
     }
 }
 
-impl<'input, I, H> DerefMut for ExprParser<'input, I, H>
+impl<'input, I> DerefMut for ExprParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input> > + TidAble<'input>,
-    H: ErrorStrategy<'input,BaseParserType<'input,I>>
 {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.base
@@ -216,13 +211,13 @@ impl<'input,I: TokenStream<'input, TF = LocalTokenFactory<'input> > + TidAble<'i
 			   recog:&mut BaseParserType<'input,I>
 	)->bool{
 		match rule_index {
-					1 => ExprParser::<'input,I,_>::e_sempred(_localctx.and_then(|x|x.downcast_ref()), pred_index, recog),
+					1 => ExprParser::<'input,I>::e_sempred(_localctx.and_then(|x|x.downcast_ref()), pred_index, recog),
 			_ => true
 		}
 	}
 }
 
-impl<'input, I> ExprParser<'input, I, DefaultErrorStrategy<'input,ExprParserContextType>>
+impl<'input, I> ExprParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input> > + TidAble<'input>,
 {
@@ -254,13 +249,15 @@ ph:PhantomData<&'input str>
 impl<'input> ExprParserContext<'input> for SContext<'input>{}
 
 impl<'input,'a> Listenable<dyn ExprListener<'input> + 'a> for SContext<'input>{
-		fn enter(&self,listener: &mut (dyn ExprListener<'input> + 'a)) {
-			listener.enter_every_rule(self);
+		fn enter(&self,listener: &mut (dyn ExprListener<'input> + 'a)) -> Result<(), ANTLRError> {
+			listener.enter_every_rule(self)?;
 			listener.enter_s(self);
+			Ok(())
 		}
-		fn exit(&self,listener: &mut (dyn ExprListener<'input> + 'a)) {
+		fn exit(&self,listener: &mut (dyn ExprListener<'input> + 'a)) -> Result<(), ANTLRError> {
 			listener.exit_s(self);
-			listener.exit_every_rule(self);
+			listener.exit_every_rule(self)?;
+			Ok(())
 		}
 }
 
@@ -299,10 +296,9 @@ fn e(&self) -> Option<Rc<EContextAll<'input>>> where Self:Sized{
 
 impl<'input> SContextAttrs<'input> for SContext<'input>{}
 
-impl<'input, I, H> ExprParser<'input, I, H>
+impl<'input, I> ExprParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input> > + TidAble<'input>,
-    H: ErrorStrategy<'input,BaseParserType<'input,I>>
 {
 	pub fn s(&mut self,)
 	-> Result<Rc<SContextAll<'input>>,ANTLRError> {
@@ -313,8 +309,8 @@ where
         let mut _localctx: Rc<SContextAll> = _localctx;
 		let result: Result<(), ANTLRError> = (|| {
 
-			//recog.base.enter_outer_alt(_localctx.clone(), 1);
-			recog.base.enter_outer_alt(None, 1);
+			//recog.base.enter_outer_alt(_localctx.clone(), 1)?;
+			recog.base.enter_outer_alt(None, 1)?;
 			{
 			/*InvokeRule e*/
 			recog.base.set_state(4);
@@ -332,7 +328,7 @@ where
 				recog.err_handler.recover(&mut recog.base, re)?;
 			}
 		}
-		recog.base.exit_rule();
+		recog.base.exit_rule()?;
 
 		Ok(_localctx)
 	}
@@ -352,13 +348,15 @@ ph:PhantomData<&'input str>
 impl<'input> ExprParserContext<'input> for EContext<'input>{}
 
 impl<'input,'a> Listenable<dyn ExprListener<'input> + 'a> for EContext<'input>{
-		fn enter(&self,listener: &mut (dyn ExprListener<'input> + 'a)) {
-			listener.enter_every_rule(self);
+		fn enter(&self,listener: &mut (dyn ExprListener<'input> + 'a)) -> Result<(), ANTLRError> {
+			listener.enter_every_rule(self)?;
 			listener.enter_e(self);
+			Ok(())
 		}
-		fn exit(&self,listener: &mut (dyn ExprListener<'input> + 'a)) {
+		fn exit(&self,listener: &mut (dyn ExprListener<'input> + 'a)) -> Result<(), ANTLRError> {
 			listener.exit_e(self);
-			listener.exit_every_rule(self);
+			listener.exit_every_rule(self)?;
+			Ok(())
 		}
 }
 
@@ -416,10 +414,9 @@ fn ADD(&self) -> Option<Rc<TerminalNode<'input,ExprParserContextType>>> where Se
 
 impl<'input> EContextAttrs<'input> for EContext<'input>{}
 
-impl<'input, I, H> ExprParser<'input, I, H>
+impl<'input, I> ExprParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input> > + TidAble<'input>,
-    H: ErrorStrategy<'input,BaseParserType<'input,I>>
 {
 	pub fn  e(&mut self,)
 	-> Result<Rc<EContextAll<'input>>,ANTLRError> {
@@ -438,8 +435,8 @@ where
 		let _startState = 2;
 		let result: Result<(), ANTLRError> = (|| {
 			let mut _alt: i32;
-			//recog.base.enter_outer_alt(_localctx.clone(), 1);
-			recog.base.enter_outer_alt(None, 1);
+			//recog.base.enter_outer_alt(_localctx.clone(), 1)?;
+			recog.base.enter_outer_alt(None, 1)?;
 			{
 			{
 			recog.base.set_state(7);
@@ -453,7 +450,7 @@ where
 			_alt = recog.interpreter.adaptive_predict(1,&mut recog.base)?;
 			while { _alt!=2 && _alt!=INVALID_ALT } {
 				if _alt==1 {
-					recog.trigger_exit_rule_event();
+					recog.trigger_exit_rule_event()?;
 					_prevctx = _localctx.clone();
 					{
 					recog.base.set_state(15);
@@ -463,7 +460,7 @@ where
 							{
 							/*recRuleAltStartAction*/
 							let mut tmp = EContextExt::new(_parentctx.clone(), _parentState);
-							recog.push_new_recursion_context(tmp.clone(), _startState, RULE_e);
+							recog.push_new_recursion_context(tmp.clone(), _startState, RULE_e)?;
 							_localctx = tmp;
 							recog.base.set_state(9);
 							if !({let _localctx = Some(_localctx.clone());
@@ -486,7 +483,7 @@ where
 							{
 							/*recRuleAltStartAction*/
 							let mut tmp = EContextExt::new(_parentctx.clone(), _parentState);
-							recog.push_new_recursion_context(tmp.clone(), _startState, RULE_e);
+							recog.push_new_recursion_context(tmp.clone(), _startState, RULE_e)?;
 							_localctx = tmp;
 							recog.base.set_state(12);
 							if !({let _localctx = Some(_localctx.clone());
@@ -524,14 +521,14 @@ where
 			recog.err_handler.report_error(&mut recog.base, re);
 	        recog.err_handler.recover(&mut recog.base, re)?;}
 		}
-		recog.base.unroll_recursion_context(_parentctx);
+		recog.base.unroll_recursion_context(_parentctx)?;
 
 		Ok(_localctx)
 	}
 }
 	lazy_static!{
     static ref _ATN: Arc<ATN> =
-        Arc::new(ATNDeserializer::new(None).deserialize(&mut _serializedATN.into_iter()));
+        Arc::new(ATNDeserializer::new(None).deserialize(&mut _serializedATN.iter()));
     static ref _decision_to_DFA: Arc<Vec<antlr4rust::RwLock<DFA>>> = {
         let mut dfa = Vec::new();
         let size = _ATN.decision_to_state.len() as i32;
@@ -544,14 +541,15 @@ where
         }
         Arc::new(dfa)
     };
-    }
-const _serializedATN: [i32; 180] = [
-	4, 1, 4, 21, 2, 0, 7, 0, 2, 1, 7, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 1, 
-	1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5, 1, 16, 8, 1, 10, 1, 12, 1, 19, 9, 1, 1, 
-	1, 0, 1, 2, 2, 0, 2, 0, 0, 20, 0, 4, 1, 0, 0, 0, 2, 6, 1, 0, 0, 0, 4, 5, 
-	3, 2, 1, 0, 5, 1, 1, 0, 0, 0, 6, 7, 6, 1, -1, 0, 7, 8, 5, 3, 0, 0, 8, 17, 
-	1, 0, 0, 0, 9, 10, 10, 3, 0, 0, 10, 11, 5, 1, 0, 0, 11, 16, 3, 2, 1, 4, 
-	12, 13, 10, 2, 0, 0, 13, 14, 5, 2, 0, 0, 14, 16, 3, 2, 1, 3, 15, 9, 1, 
-	0, 0, 0, 15, 12, 1, 0, 0, 0, 16, 19, 1, 0, 0, 0, 17, 15, 1, 0, 0, 0, 17, 
-	18, 1, 0, 0, 0, 18, 3, 1, 0, 0, 0, 19, 17, 1, 0, 0, 0, 2, 15, 17
-];
+	static ref _serializedATN: Vec<i32> = vec![
+		4, 1, 4, 21, 2, 0, 7, 0, 2, 1, 7, 1, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1, 
+		1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 5, 1, 16, 8, 1, 10, 1, 12, 1, 19, 9, 
+		1, 1, 1, 0, 1, 2, 2, 0, 2, 0, 0, 20, 0, 4, 1, 0, 0, 0, 2, 6, 1, 0, 0, 
+		0, 4, 5, 3, 2, 1, 0, 5, 1, 1, 0, 0, 0, 6, 7, 6, 1, -1, 0, 7, 8, 5, 3, 
+		0, 0, 8, 17, 1, 0, 0, 0, 9, 10, 10, 3, 0, 0, 10, 11, 5, 1, 0, 0, 11, 16, 
+		3, 2, 1, 4, 12, 13, 10, 2, 0, 0, 13, 14, 5, 2, 0, 0, 14, 16, 3, 2, 1, 
+		3, 15, 9, 1, 0, 0, 0, 15, 12, 1, 0, 0, 0, 16, 19, 1, 0, 0, 0, 17, 15, 
+		1, 0, 0, 0, 17, 18, 1, 0, 0, 0, 18, 3, 1, 0, 0, 0, 19, 17, 1, 0, 0, 0, 
+		2, 15, 17
+	];
+}

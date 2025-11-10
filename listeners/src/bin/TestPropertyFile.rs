@@ -3,7 +3,7 @@ use std::{env, fs};
 use antlr4rust::common_token_stream::CommonTokenStream;
 use antlr4rust::token_factory::CommonTokenFactory;
 use antlr4rust::tree::ParseTreeListener;
-use antlr4rust::{tree::ParseTree, InputStream};
+use antlr4rust::{InputStream, tree::ParseTree};
 use listeners::{
     PropContext, PropContextAttrs, PropertyFileLexer, PropertyFileListener, PropertyFileParser,
     PropertyFileParserContextType, PropertyFileTreeWalker,
@@ -38,5 +38,5 @@ fn main() {
     });
     let tree = parser.file().expect("parsed unsuccessfully");
     let listener = PropertyFileTreeWalker::walk(listener, &*tree);
-    println!("{:?}", listener.props);
+    println!("{:?}", listener.unwrap().props);
 }

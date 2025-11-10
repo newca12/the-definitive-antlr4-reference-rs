@@ -1,10 +1,14 @@
-use antlr4rust::tree::{ParseTree, ParseTreeVisitorCompat, Visitable};
 use antlr4rust::InputStream;
+use antlr4rust::tree::{ParseTree, ParseTreeVisitorCompat, Visitable};
 use antlr4rust::{common_token_stream::CommonTokenStream, token_factory::CommonTokenFactory};
 use serde::{Deserialize, Serialize};
-use tour::{AddSubContext, AddSubContextAttrs, AssignContext, AssignContextAttrs, IdContext, IntContext, LabeledExprLexer, LabeledExprParser, LabeledExprParserContextType, LabeledExprVisitorCompat, MulDivContext, MulDivContextAttrs, PrintExprContext, PrintExprContextAttrs};
 use std::collections::HashMap;
 use std::{env, fs};
+use tour::{
+    AddSubContext, AddSubContextAttrs, AssignContext, AssignContextAttrs, IdContext, IntContext,
+    LabeledExprLexer, LabeledExprParser, LabeledExprParserContextType, LabeledExprVisitorCompat,
+    MulDivContext, MulDivContextAttrs, PrintExprContext, PrintExprContextAttrs,
+};
 
 #[derive(Serialize, Deserialize, Debug, Clone)]
 pub struct Calc {
@@ -89,14 +93,14 @@ impl LabeledExprVisitorCompat<'_> for CalcParser {
 fn main() {
     let args: Vec<String> = env::args().collect();
     assert!(args.len() > 1, "You need to provide an input file.");
-    let input_file = fs::read_to_string(&args[1])
-        .expect("Something went wrong reading the file");
+    let input_file = fs::read_to_string(&args[1]).expect("Something went wrong reading the file");
     let tf = CommonTokenFactory::default();
-    let lexer = LabeledExprLexer::new_with_token_factory(InputStream::new(input_file.as_str()), &tf);
+    let lexer =
+        LabeledExprLexer::new_with_token_factory(InputStream::new(input_file.as_str()), &tf);
     let tokens = CommonTokenStream::new(lexer);
     let mut parser = LabeledExprParser::new(tokens);
     let tree = parser.prog().expect("parsed unsuccessfully");
-    
+
     let mut calc_parser = CalcParser {
         calc: Default::default(),
     };
@@ -104,5 +108,4 @@ fn main() {
     tree.accept(&mut calc_parser);
 
     calc_parser.calc;
-
 }

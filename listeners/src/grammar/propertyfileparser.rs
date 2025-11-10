@@ -73,29 +73,26 @@ pub type PropertyFileTreeWalker<'input,'a> =
 	ParseTreeWalker<'input, 'a, PropertyFileParserContextType , dyn PropertyFileListener<'input> + 'a>;
 
 /// Parser for PropertyFile grammar
-pub struct PropertyFileParser<'input,I,H>
+pub struct PropertyFileParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input> > + TidAble<'input>,
-    H: ErrorStrategy<'input,BaseParserType<'input,I>>
 {
 	base:BaseParserType<'input,I>,
 	interpreter:Arc<ParserATNSimulator>,
 	_shared_context_cache: Box<PredictionContextCache>,
-    pub err_handler: H,
+    pub err_handler: Box<dyn ErrorStrategy<'input,BaseParserType<'input,I> > >,
 }
 
-impl<'input, I, H> PropertyFileParser<'input, I, H>
+impl<'input, I> PropertyFileParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input> > + TidAble<'input>,
-    H: ErrorStrategy<'input,BaseParserType<'input,I>>
 {
-
-    pub fn set_error_strategy(&mut self, strategy: H) {
+    pub fn set_error_strategy(&mut self, strategy: Box<dyn ErrorStrategy<'input,BaseParserType<'input,I> > >) {
         self.err_handler = strategy
     }
 
-    pub fn with_strategy(input: I, strategy: H) -> Self {
-		antlr4rust::recognizer::check_version("0","3");
+    pub fn with_strategy(input: I, strategy: Box<dyn ErrorStrategy<'input,BaseParserType<'input,I> > >) -> Self {
+		antlr4rust::recognizer::check_version("0","5");
 		let interpreter = Arc::new(ParserATNSimulator::new(
 			_ATN.clone(),
 			_decision_to_DFA.clone(),
@@ -119,7 +116,7 @@ where
 
 type DynStrategy<'input,I> = Box<dyn ErrorStrategy<'input,BaseParserType<'input,I>> + 'input>;
 
-impl<'input, I> PropertyFileParser<'input, I, DynStrategy<'input,I>>
+impl<'input, I> PropertyFileParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input> > + TidAble<'input>,
 {
@@ -128,12 +125,12 @@ where
     }
 }
 
-impl<'input, I> PropertyFileParser<'input, I, DefaultErrorStrategy<'input,PropertyFileParserContextType>>
+impl<'input, I> PropertyFileParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input> > + TidAble<'input>,
 {
     pub fn new(input: I) -> Self{
-    	Self::with_strategy(input,DefaultErrorStrategy::new())
+    	Self::with_strategy(input,Box::new(DefaultErrorStrategy::new()))
     }
 }
 
@@ -170,10 +167,9 @@ impl<'input> ParserNodeType<'input> for PropertyFileParserContextType{
 	type Type = dyn PropertyFileParserContext<'input> + 'input;
 }
 
-impl<'input, I, H> Deref for PropertyFileParser<'input, I, H>
+impl<'input, I> Deref for PropertyFileParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input> > + TidAble<'input>,
-    H: ErrorStrategy<'input,BaseParserType<'input,I>>
 {
     type Target = BaseParserType<'input,I>;
 
@@ -182,10 +178,9 @@ where
     }
 }
 
-impl<'input, I, H> DerefMut for PropertyFileParser<'input, I, H>
+impl<'input, I> DerefMut for PropertyFileParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input> > + TidAble<'input>,
-    H: ErrorStrategy<'input,BaseParserType<'input,I>>
 {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.base
@@ -227,13 +222,15 @@ ph:PhantomData<&'input str>
 impl<'input> PropertyFileParserContext<'input> for FileContext<'input>{}
 
 impl<'input,'a> Listenable<dyn PropertyFileListener<'input> + 'a> for FileContext<'input>{
-		fn enter(&self,listener: &mut (dyn PropertyFileListener<'input> + 'a)) {
-			listener.enter_every_rule(self);
+		fn enter(&self,listener: &mut (dyn PropertyFileListener<'input> + 'a)) -> Result<(), ANTLRError> {
+			listener.enter_every_rule(self)?;
 			listener.enter_file(self);
+			Ok(())
 		}
-		fn exit(&self,listener: &mut (dyn PropertyFileListener<'input> + 'a)) {
+		fn exit(&self,listener: &mut (dyn PropertyFileListener<'input> + 'a)) -> Result<(), ANTLRError> {
 			listener.exit_file(self);
-			listener.exit_every_rule(self);
+			listener.exit_every_rule(self)?;
+			Ok(())
 		}
 }
 
@@ -275,10 +272,9 @@ fn prop(&self, i: usize) -> Option<Rc<PropContextAll<'input>>> where Self:Sized{
 
 impl<'input> FileContextAttrs<'input> for FileContext<'input>{}
 
-impl<'input, I, H> PropertyFileParser<'input, I, H>
+impl<'input, I> PropertyFileParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input> > + TidAble<'input>,
-    H: ErrorStrategy<'input,BaseParserType<'input,I>>
 {
 	pub fn file(&mut self,)
 	-> Result<Rc<FileContextAll<'input>>,ANTLRError> {
@@ -290,8 +286,8 @@ where
 		let mut _la: i32 = -1;
 		let result: Result<(), ANTLRError> = (|| {
 
-			//recog.base.enter_outer_alt(_localctx.clone(), 1);
-			recog.base.enter_outer_alt(None, 1);
+			//recog.base.enter_outer_alt(_localctx.clone(), 1)?;
+			recog.base.enter_outer_alt(None, 1)?;
 			{
 			recog.base.set_state(5); 
 			recog.err_handler.sync(&mut recog.base)?;
@@ -322,7 +318,7 @@ where
 				recog.err_handler.recover(&mut recog.base, re)?;
 			}
 		}
-		recog.base.exit_rule();
+		recog.base.exit_rule()?;
 
 		Ok(_localctx)
 	}
@@ -341,13 +337,15 @@ ph:PhantomData<&'input str>
 impl<'input> PropertyFileParserContext<'input> for PropContext<'input>{}
 
 impl<'input,'a> Listenable<dyn PropertyFileListener<'input> + 'a> for PropContext<'input>{
-		fn enter(&self,listener: &mut (dyn PropertyFileListener<'input> + 'a)) {
-			listener.enter_every_rule(self);
+		fn enter(&self,listener: &mut (dyn PropertyFileListener<'input> + 'a)) -> Result<(), ANTLRError> {
+			listener.enter_every_rule(self)?;
 			listener.enter_prop(self);
+			Ok(())
 		}
-		fn exit(&self,listener: &mut (dyn PropertyFileListener<'input> + 'a)) {
+		fn exit(&self,listener: &mut (dyn PropertyFileListener<'input> + 'a)) -> Result<(), ANTLRError> {
 			listener.exit_prop(self);
-			listener.exit_every_rule(self);
+			listener.exit_every_rule(self)?;
+			Ok(())
 		}
 }
 
@@ -393,10 +391,9 @@ fn STRING(&self) -> Option<Rc<TerminalNode<'input,PropertyFileParserContextType>
 
 impl<'input> PropContextAttrs<'input> for PropContext<'input>{}
 
-impl<'input, I, H> PropertyFileParser<'input, I, H>
+impl<'input, I> PropertyFileParser<'input, I>
 where
     I: TokenStream<'input, TF = LocalTokenFactory<'input> > + TidAble<'input>,
-    H: ErrorStrategy<'input,BaseParserType<'input,I>>
 {
 	pub fn prop(&mut self,)
 	-> Result<Rc<PropContextAll<'input>>,ANTLRError> {
@@ -407,8 +404,8 @@ where
         let mut _localctx: Rc<PropContextAll> = _localctx;
 		let result: Result<(), ANTLRError> = (|| {
 
-			//recog.base.enter_outer_alt(_localctx.clone(), 1);
-			recog.base.enter_outer_alt(None, 1);
+			//recog.base.enter_outer_alt(_localctx.clone(), 1)?;
+			recog.base.enter_outer_alt(None, 1)?;
 			{
 			recog.base.set_state(9);
 			recog.base.match_token(PropertyFile_ID,&mut recog.err_handler)?;
@@ -434,14 +431,14 @@ where
 				recog.err_handler.recover(&mut recog.base, re)?;
 			}
 		}
-		recog.base.exit_rule();
+		recog.base.exit_rule()?;
 
 		Ok(_localctx)
 	}
 }
 	lazy_static!{
     static ref _ATN: Arc<ATN> =
-        Arc::new(ATNDeserializer::new(None).deserialize(&mut _serializedATN.into_iter()));
+        Arc::new(ATNDeserializer::new(None).deserialize(&mut _serializedATN.iter()));
     static ref _decision_to_DFA: Arc<Vec<antlr4rust::RwLock<DFA>>> = {
         let mut dfa = Vec::new();
         let size = _ATN.decision_to_state.len() as i32;
@@ -454,12 +451,12 @@ where
         }
         Arc::new(dfa)
     };
-    }
-const _serializedATN: [i32; 124] = [
-	4, 1, 4, 15, 2, 0, 7, 0, 2, 1, 7, 1, 1, 0, 4, 0, 6, 8, 0, 11, 0, 12, 0, 
-	7, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 2, 0, 2, 0, 0, 13, 0, 5, 1, 
-	0, 0, 0, 2, 9, 1, 0, 0, 0, 4, 6, 3, 2, 1, 0, 5, 4, 1, 0, 0, 0, 6, 7, 1, 
-	0, 0, 0, 7, 5, 1, 0, 0, 0, 7, 8, 1, 0, 0, 0, 8, 1, 1, 0, 0, 0, 9, 10, 5, 
-	3, 0, 0, 10, 11, 5, 1, 0, 0, 11, 12, 5, 4, 0, 0, 12, 13, 5, 2, 0, 0, 13, 
-	3, 1, 0, 0, 0, 1, 7
-];
+	static ref _serializedATN: Vec<i32> = vec![
+		4, 1, 4, 15, 2, 0, 7, 0, 2, 1, 7, 1, 1, 0, 4, 0, 6, 8, 0, 11, 0, 12, 0, 
+		7, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 2, 0, 2, 0, 0, 13, 0, 5, 
+		1, 0, 0, 0, 2, 9, 1, 0, 0, 0, 4, 6, 3, 2, 1, 0, 5, 4, 1, 0, 0, 0, 6, 7, 
+		1, 0, 0, 0, 7, 5, 1, 0, 0, 0, 7, 8, 1, 0, 0, 0, 8, 1, 1, 0, 0, 0, 9, 10, 
+		5, 3, 0, 0, 10, 11, 5, 1, 0, 0, 11, 12, 5, 4, 0, 0, 12, 13, 5, 2, 0, 0, 
+		13, 3, 1, 0, 0, 0, 1, 7
+	];
+}

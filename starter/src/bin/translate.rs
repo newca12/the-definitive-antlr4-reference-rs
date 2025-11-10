@@ -8,22 +8,25 @@ use antlr4rust::parser_rule_context::BaseParserRuleContext;
 use antlr4rust::rule_context::CustomRuleContext;
 use antlr4rust::token_factory::CommonTokenFactory;
 use antlr4rust::tree::{ParseTreeListener, ParseTreeWalker};
-use antlr4rust::{tree::ParseTree, InputStream};
-use starter::{ArrayInitLexer, ArrayInitListener, ArrayInitParser, ArrayInitParserContextType, InitContext, InitContextExt, ValueContext, ValueContextAttrs};
-
+use antlr4rust::{InputStream, tree::ParseTree};
+use starter::{
+    ArrayInitLexer, ArrayInitListener, ArrayInitParser, ArrayInitParserContextType, InitContext,
+    InitContextExt, ValueContext, ValueContextAttrs,
+};
 
 struct ShortToUnicodeStringListener {}
 
-impl<'input> ParseTreeListener<'input, ArrayInitParserContextType> for ShortToUnicodeStringListener {
- 
+impl<'input> ParseTreeListener<'input, ArrayInitParserContextType>
+    for ShortToUnicodeStringListener
+{
 }
 
 impl<'input> ArrayInitListener<'input> for ShortToUnicodeStringListener {
-   fn enter_init(&mut self, _ctx: &InitContext) {
-       print!("'");
+    fn enter_init(&mut self, _ctx: &InitContext) {
+        print!("'");
     }
 
-    fn exit_init(&mut self, _ctx: &InitContext) { 
+    fn exit_init(&mut self, _ctx: &InitContext) {
         print!("'");
     }
 
@@ -33,7 +36,7 @@ impl<'input> ArrayInitListener<'input> for ShortToUnicodeStringListener {
 
     //the value is only available on exit. Maybe an antlr4rust bug.
     fn exit_value(&mut self, ctx: &ValueContext<'input>) {
-        let value : u32 = ctx.INT().unwrap().get_text().parse().unwrap(); 
+        let value: u32 = ctx.INT().unwrap().get_text().parse().unwrap();
         print!("\\u{:#04x}", value);
     }
 }

@@ -102,7 +102,7 @@ impl<'input, Input:CharStream<From<'input> >> LExprLexer<'input,Input>{
     }
 
 	pub fn new_with_token_factory(input: Input, tf: &'input LocalTokenFactory<'input>) -> Self {
-		antlr4rust::recognizer::check_version("0","3");
+		antlr4rust::recognizer::check_version("0","5");
     	Self {
 			base: BaseLexer::new_base_lexer(
 				input,
@@ -150,11 +150,11 @@ impl<'input, Input:CharStream<From<'input> >> TokenSource<'input> for LExprLexer
         self.base.next_token()
     }
 
-    fn get_line(&self) -> i32 {
+    fn get_line(&self) -> isize {
         self.base.get_line()
     }
 
-    fn get_char_position_in_line(&self) -> i32 {
+    fn get_char_position_in_line(&self) -> isize {
         self.base.get_char_position_in_line()
     }
 
@@ -178,7 +178,7 @@ impl<'input, Input:CharStream<From<'input> >> TokenSource<'input> for LExprLexer
 
 		lazy_static!{
 	    static ref _ATN: Arc<ATN> =
-	        Arc::new(ATNDeserializer::new(None).deserialize(&mut _serializedATN.into_iter()));
+	        Arc::new(ATNDeserializer::new(None).deserialize(&mut _serializedATN.iter()));
 	    static ref _decision_to_DFA: Arc<Vec<antlr4rust::RwLock<DFA>>> = {
 	        let mut dfa = Vec::new();
 	        let size = _ATN.decision_to_state.len() as i32;
@@ -191,18 +191,18 @@ impl<'input, Input:CharStream<From<'input> >> TokenSource<'input> for LExprLexer
 	        }
 	        Arc::new(dfa)
 	    };
-	    }
-	const _serializedATN: [i32; 247] = [
-		4, 0, 4, 25, 6, -1, 2, 0, 7, 0, 2, 1, 7, 1, 2, 2, 7, 2, 2, 3, 7, 3, 1, 
-		0, 1, 0, 1, 1, 1, 1, 1, 2, 4, 2, 15, 8, 2, 11, 2, 12, 2, 16, 1, 3, 4, 
-		3, 20, 8, 3, 11, 3, 12, 3, 21, 1, 3, 1, 3, 0, 0, 4, 1, 1, 3, 2, 5, 3, 
-		7, 4, 1, 0, 2, 1, 0, 48, 57, 2, 0, 9, 10, 32, 32, 26, 0, 1, 1, 0, 0, 0, 
-		0, 3, 1, 0, 0, 0, 0, 5, 1, 0, 0, 0, 0, 7, 1, 0, 0, 0, 1, 9, 1, 0, 0, 0, 
-		3, 11, 1, 0, 0, 0, 5, 14, 1, 0, 0, 0, 7, 19, 1, 0, 0, 0, 9, 10, 5, 42, 
-		0, 0, 10, 2, 1, 0, 0, 0, 11, 12, 5, 43, 0, 0, 12, 4, 1, 0, 0, 0, 13, 15, 
-		7, 0, 0, 0, 14, 13, 1, 0, 0, 0, 15, 16, 1, 0, 0, 0, 16, 14, 1, 0, 0, 0, 
-		16, 17, 1, 0, 0, 0, 17, 6, 1, 0, 0, 0, 18, 20, 7, 1, 0, 0, 19, 18, 1, 
-		0, 0, 0, 20, 21, 1, 0, 0, 0, 21, 19, 1, 0, 0, 0, 21, 22, 1, 0, 0, 0, 22, 
-		23, 1, 0, 0, 0, 23, 24, 6, 3, 0, 0, 24, 8, 1, 0, 0, 0, 3, 0, 16, 21, 1, 
-		6, 0, 0
-	];
+		static ref _serializedATN: Vec<i32> = vec![
+			4, 0, 4, 25, 6, -1, 2, 0, 7, 0, 2, 1, 7, 1, 2, 2, 7, 2, 2, 3, 7, 3, 1, 
+			0, 1, 0, 1, 1, 1, 1, 1, 2, 4, 2, 15, 8, 2, 11, 2, 12, 2, 16, 1, 3, 4, 
+			3, 20, 8, 3, 11, 3, 12, 3, 21, 1, 3, 1, 3, 0, 0, 4, 1, 1, 3, 2, 5, 3, 
+			7, 4, 1, 0, 2, 1, 0, 48, 57, 2, 0, 9, 10, 32, 32, 26, 0, 1, 1, 0, 0, 
+			0, 0, 3, 1, 0, 0, 0, 0, 5, 1, 0, 0, 0, 0, 7, 1, 0, 0, 0, 1, 9, 1, 0, 
+			0, 0, 3, 11, 1, 0, 0, 0, 5, 14, 1, 0, 0, 0, 7, 19, 1, 0, 0, 0, 9, 10, 
+			5, 42, 0, 0, 10, 2, 1, 0, 0, 0, 11, 12, 5, 43, 0, 0, 12, 4, 1, 0, 0, 
+			0, 13, 15, 7, 0, 0, 0, 14, 13, 1, 0, 0, 0, 15, 16, 1, 0, 0, 0, 16, 14, 
+			1, 0, 0, 0, 16, 17, 1, 0, 0, 0, 17, 6, 1, 0, 0, 0, 18, 20, 7, 1, 0, 0, 
+			19, 18, 1, 0, 0, 0, 20, 21, 1, 0, 0, 0, 21, 19, 1, 0, 0, 0, 21, 22, 1, 
+			0, 0, 0, 22, 23, 1, 0, 0, 0, 23, 24, 6, 3, 0, 0, 24, 8, 1, 0, 0, 0, 3, 
+			0, 16, 21, 1, 6, 0, 0
+		];
+	}
